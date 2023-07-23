@@ -1,0 +1,32 @@
+spring.cloud:
+  function:
+    definition: extractUserKeyProcessor;countUserFavoriteColorProcessor
+  stream:
+    bindings:
+      extractUserKeyProcessor-in-0:
+        destination: favorite-color-input
+      extractUserKeyProcessor-out-0:
+        destination: user-keys-and-colors
+      countUserFavoriteColorProcessor-in-0:
+        destination: user-keys-and-colors
+      countUserFavoriteColorProcessor-out-0:
+        destination: favorite-color-output
+    kafka:
+      streams:
+        binder:
+          brokers: localhost:9092
+          configuration:
+            schema.registry.url: http://localhost:8081
+            processing.guarantee: exactly_once
+            default:
+              key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+              value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        bindings:
+          countUserFavoriteColorProcessor-out-0:
+            producer:
+              keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+              valueSerde: org.apache.kafka.common.serialization.Serdes$LongSerde
+              nativeEncoding: false
+
+
+
